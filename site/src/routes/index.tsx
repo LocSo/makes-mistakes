@@ -45,7 +45,7 @@ const steps = [
     Open <code className="text-foreground/80">chrome://extensions</code> and turn on Developer mode.
   </>,
   "Click Load unpacked and pick the unpacked folder.",
-  "Reload any open ChatGPT, Claude, Gemini or Grok tab.",
+  "Reload any open ChatGPT, Claude, Gemini, Grok or Google tab.",
 ]
 
 function Home() {
@@ -71,8 +71,8 @@ function Home() {
 
           <p className="rise text-muted-foreground mt-8 max-w-xl text-base leading-relaxed [animation-delay:160ms] sm:text-lg">
             A very small extension that drops the hedge from the footer disclaimer on ChatGPT,
-            Claude, Gemini and Grok, gilds what's left, and hands you a button for when the answer
-            is confidently wrong.
+            Claude, Gemini, Grok and Google's AI Mode — in your own language — gilds what's left,
+            and hands you a button for when the answer is confidently wrong.
           </p>
 
           <div className="rise mt-10 flex flex-wrap items-center gap-4 [animation-delay:240ms]">

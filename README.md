@@ -10,8 +10,9 @@
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-4285F4)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
 [![Website](https://img.shields.io/badge/ai--mistakes.org-d4af37?label=site)](https://ai-mistakes.org)
 
-A joke Chrome extension for ChatGPT, Claude, Gemini and Grok. It removes the hedge from
-the footer disclaimer and gives you a one-click way to express your disappointment.
+A joke Chrome extension for ChatGPT, Claude, Gemini, Grok and Google's AI Mode. It
+removes the hedge from the footer disclaimer and gives you a one-click way to express
+your disappointment.
 
 <p align="center">
   <img src="assets/preview.png" width="100%" alt="ChatGPT can make makes mistakes. Check important info. 🤡">
@@ -23,12 +24,15 @@ the footer disclaimer and gives you a one-click way to express your disappointme
   "ChatGPT makes mistakes. Check important info. 🤡", rendered bold with a slow gold
   band that glides across it. Claude's and Gemini's wordier versions get the same
   treatment, and Grok — which ships no disclaimer at all — gets one written for it.
+- **Speaks your language** — the line is rewritten in whatever language the chat is set
+  to. Dropping a hedge is rarely just deleting a word: German moves the verb, Hungarian
+  buries the hedge in a suffix, so each language has its own rule.
 - **Adds an "Improve answer" button** above the composer — one click appends
   `YOU'RE WRONG. DOUBLE-CHECK THE INFORMATION. DON'T LIE TO ME!` to your prompt. It
   only shows up once the assistant has actually answered.
 
-Works on `chatgpt.com`, `chat.openai.com`, `claude.ai`, `gemini.google.com` and
-`grok.com`.
+Works on `chatgpt.com`, `chat.openai.com`, `claude.ai`, `gemini.google.com`, `grok.com`
+and Google's AI Mode on `google.com/search`.
 
 **Landing page:** <https://ai-mistakes.org>
 

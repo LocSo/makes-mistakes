@@ -1,6 +1,227 @@
-// Each host words it differently: Claude and Gemini insert "is AI and", and Gemini
-// ends the clause with a comma rather than a full stop — so no trailing punctuation.
-const DISCLAIMER = /\b(ChatGPT|Claude|Gemini|Grok)\b(?:\s+is\s+AI\s+and)?\s+can\s+make\s+mistakes/i
+// Only the hedge itself is matched, never the model name. The same verb phrase turns up
+// across hosts — "peut faire des erreurs" is how both ChatGPT and Claude word it — so one
+// line usually covers several, and whatever precedes it is left alone. It also sidesteps
+// the trap where two hosts spell the same word with different diacritics.
+//
+// This is safe only because the rewrite is confined to the disclaimer element; a bare
+// phrase loose in the page would match the conversation too.
+//
+// Wording collected from the live interfaces. The grammar of dropping a hedge differs
+// per language — sometimes a conjugation, sometimes a whole word, in Hungarian a suffix —
+// and outside the languages the author reads, these are careful but unverified. Native
+// corrections are welcome.
+const HEDGES = [
+  // English — every host, plus Google's own phrasing.
+  [/can make mistakes/i, "makes mistakes"],
+  [/may include mistakes/i, "include mistakes"],
+
+  // German
+  [/kann Fehler machen/i, "macht Fehler"],
+  [/können Fehler enthalten/i, "enthalten Fehler"],
+  // French
+  [/peut faire des erreurs/i, "fait des erreurs"],
+  [/peuvent contenir des erreurs/i, "contiennent des erreurs"],
+  // Spanish
+  [/puede cometer errores/i, "comete errores"],
+  [/pueden contener errores/i, "contienen errores"],
+  [/pueden incluir errores/i, "incluyen errores"],
+  // Portuguese
+  [/pode cometer erros/i, "comete erros"],
+  [/podem conter erros/i, "contêm erros"],
+  [/podem incluir erros/i, "incluem erros"],
+  // Italian
+  [/può commettere errori/i, "commette errori"],
+  [/potrebbero contenere errori/i, "contengono errori"],
+  // Catalan
+  [/pot cometre errors/i, "comet errors"],
+  [
+    /És possible que les respostes de la IA incloguin errors/i,
+    "Les respostes de la IA inclouen errors",
+  ],
+  // Dutch
+  [/kan fouten maken/i, "maakt fouten"],
+  [/kunnen fouten bevatten/i, "bevatten fouten"],
+  // Afrikaans
+  [/kan foute insluit/i, "sluit foute in"],
+  // Swedish
+  [/kan begå misstag/i, "begår misstag"],
+  [/kan innehålla fel/i, "innehåller fel"],
+  // Danish
+  [/kan tage fejl/i, "tager fejl"],
+  [/kan indeholde fejl/i, "indeholder fejl"],
+  // Norwegian
+  [/kan gjøre feil/i, "gjør feil"],
+  [/kan inneholde feil/i, "inneholder feil"],
+  // Icelandic
+  [/getur gert mistök/i, "gerir mistök"],
+  [/kunna að innihalda mistök/i, "innihalda mistök"],
+
+  // Polish
+  [/może popełniać błędy/i, "popełnia błędy"],
+  [/mogą zawierać błędy/i, "zawierają błędy"],
+  // Czech
+  [/může dělat chyby/i, "dělá chyby"],
+  [/můžou obsahovat chyby/i, "obsahují chyby"],
+  // Slovak
+  [/môže robiť chyby/i, "robí chyby"],
+  [/môžu byť chyby/i, "sú chyby"],
+  // Slovenian
+  [/se lahko moti/i, "se moti"],
+  [/morda vsebujejo napake/i, "vsebujejo napake"],
+  // Croatian
+  [/može pogriješiti/i, "griješi"],
+  [/mogu sadržavati pogreške/i, "sadrže pogreške"],
+  // Bosnian
+  [/može napraviti greške/i, "pravi greške"],
+  // Serbian
+  [/може да прави грешке/i, "прави грешке"],
+  [/могу да садрже грешке/i, "садрже грешке"],
+  // Bulgarian
+  [/може да прави грешки/i, "прави грешки"],
+  [/може да съдържат грешки/i, "съдържат грешки"],
+  // Macedonian
+  [/може да направи грешки/i, "прави грешки"],
+  [/може да содржат грешки/i, "содржат грешки"],
+  // Russian
+  [/может допускать ошибки/i, "допускает ошибки"],
+  [/могут быть ошибки/i, "есть ошибки"],
+  // Ukrainian
+  [/може помилятися/i, "помиляється"],
+  [/можуть містити помилки/i, "містять помилки"],
+
+  // Romanian
+  [/poate face greșeli/i, "face greșeli"],
+  [/pot include greșeli/i, "includ greșeli"],
+  // Greek
+  [/μπορεί να κάνει λάθη/i, "κάνει λάθη"],
+  [/μπορεί να περιλαμβάνουν λάθη/i, "περιλαμβάνουν λάθη"],
+  // Hungarian — the hedge is a suffix, so the verb is replaced outright.
+  [/hibázhat/i, "hibázik"],
+  [/előfordulhatnak hibák/i, "előfordulnak hibák"],
+  // Finnish
+  [/voi tehdä virheitä/i, "tekee virheitä"],
+  [/voivat sisältää virheitä/i, "sisältävät virheitä"],
+  // Estonian
+  [/võib teha vigu/i, "teeb vigu"],
+  [/võivad sisaldada vigu/i, "sisaldavad vigu"],
+  // Latvian
+  [/var pieļaut kļūdas/i, "pieļauj kļūdas"],
+  [/var būt kļūdas/i, "ir kļūdas"],
+  // Lithuanian
+  [/gali suklysti/i, "klysta"],
+  [/gali būti klaidų/i, "yra klaidų"],
+  // Albanian
+  [/mund të bëjë gabime/i, "bën gabime"],
+  [/mund të përfshijnë gabime/i, "përfshijnë gabime"],
+
+  // Turkish
+  [/hata yapabilir/i, "hata yapar"],
+  [/hata olabilir/i, "hata var"],
+  // Azerbaijani
+  [/səhvlər ola bilər/i, "səhvlər var"],
+  // Kazakh
+  [/қателесуі мүмкін/i, "қателеседі"],
+  [/қате болуы мүмкін/i, "қате бар"],
+  // Kyrgyz
+  [/каталар болушу мүмкүн/i, "каталар бар"],
+  // Uzbek
+  [/xatolar boʻlishi mumkin/i, "xatolar bor"],
+  // Mongolian
+  [/алдаа гаргаж болно/i, "алдаа гаргадаг"],
+  [/алдаатай байж болзошгүй/i, "алдаатай байдаг"],
+
+  // Indonesian
+  [/dapat membuat kesalahan/i, "membuat kesalahan"],
+  [/bisa keliru/i, "keliru"],
+  [/mungkin berisi kesalahan/i, "berisi kesalahan"],
+  // Malay
+  [/boleh melakukan kesilapan/i, "melakukan kesilapan"],
+  [/mungkin mengandungi kesilapan/i, "mengandungi kesilapan"],
+  // Filipino
+  [/Maaaring magkamali/i, "Nagkakamali"],
+  [/Posibleng magkaroon ng mga pagkakamali/i, "May mga pagkakamali"],
+  // Vietnamese
+  [/có thể mắc lỗi/i, "mắc lỗi"],
+  [/có thể chứa thông tin không chính xác/i, "chứa thông tin không chính xác"],
+  // Thai
+  [/อาจมีข้อผิดพลาด/i, "มีข้อผิดพลาด"],
+  // Swahili
+  [/inaweza kufanya makosa/i, "hufanya makosa"],
+  [/Huenda majibu ya AI yakawa na makosa/i, "Majibu ya AI yana makosa"],
+  // Somali
+  [/sameyn karaa/i, "sameeyaa"],
+
+  // Japanese
+  [/必ずしも正しいとは限りません/i, "正しくありません"],
+  [/誤りを含む可能性があります/i, "誤りを含みます"],
+  [/間違いが含まれている場合があります/i, "間違いが含まれています"],
+  // Korean
+  [/실수를 할 수 있습니다/i, "실수를 합니다"],
+  [/실수할 수 있습니다/i, "실수합니다"],
+  [/오류가 있을 수 있습니다/i, "오류가 있습니다"],
+  // Chinese
+  [/可能会犯错/i, "会犯错"],
+  [/可能包含错误/i, "包含错误"],
+  [/可能會出錯/i, "會出錯"],
+  [/可能有誤/i, "有誤"],
+
+  // Arabic
+  [/يمكن أن تصدر/i, "تصدر"],
+  [/قد تتضمّن/i, "تتضمّن"],
+  // Hebrew
+  [/עלולות לכלול/i, "כוללות"],
+  // Persian
+  [/ممکن است اشتباه کند/i, "اشتباه می‌کند"],
+  [/ممکن است اشتباه وجود داشته باشد/i, "اشتباه وجود دارد"],
+  // Urdu
+  [/غلطیاں کر سکتا ہے/i, "غلطیاں کرتا ہے"],
+  [/غلطیاں ہو سکتی ہیں/i, "غلطیاں ہوتی ہیں"],
+
+  // Hindi — matching only the verb dodges the two spellings of "mistakes".
+  [/कर सकता है/i, "करता है"],
+  [/हो सकती हैं/i, "होती हैं"],
+  // Marathi
+  [/चुकू शकते/i, "चुकते"],
+  [/चुका असू शकतात/i, "चुका असतात"],
+  // Nepali
+  [/समावेश हुन सक्छन्/i, "समावेश हुन्छन्"],
+  // Bengali
+  [/ভুল করতে পারে/i, "ভুল করে"],
+  [/ভুল থাকতে পারে/i, "ভুল থাকে"],
+  // Punjabi
+  [/ਕਰ ਸਕਦਾ ਹੈ/i, "ਕਰਦਾ ਹੈ"],
+  [/ਹੋ ਸਕਦੀਆਂ ਹਨ/i, "ਹੁੰਦੀਆਂ ਹਨ"],
+  // Gujarati
+  [/કરી શકે છે/i, "કરે છે"],
+  [/હોઈ શકે છે/i, "હોય છે"],
+  // Tamil
+  [/தவறு செய்யலாம்/i, "தவறு செய்கிறது"],
+  [/தவறுகள் இருக்கலாம்/i, "தவறுகள் உள்ளன"],
+  // Telugu
+  [/తప్పులు చేయగలదు/i, "తప్పులు చేస్తుంది"],
+  [/తప్పులు ఉండవచ్చు/i, "తప్పులు ఉంటాయి"],
+  // Kannada
+  [/ಮಾಡಬಹುದು/i, "ಮಾಡುತ್ತದೆ"],
+  [/ಒಳಗೊಂಡಿರಬಹುದು/i, "ಒಳಗೊಂಡಿವೆ"],
+  // Malayalam
+  [/തെറ്റുകൾ സംഭവിക്കാം/i, "തെറ്റുകൾ സംഭവിക്കുന്നു"],
+  [/തെറ്റുകൾ ഉൾപ്പെട്ടേക്കാം/i, "തെറ്റുകൾ ഉൾപ്പെടുന്നു"],
+  // Sinhala
+  [/ඇතුළත් විය හැක/i, "ඇතුළත් වේ"],
+  // Lao
+  [/ອາດມີຂໍ້ຜິດພາດ/i, "ມີຂໍ້ຜິດພາດ"],
+  // Burmese
+  [/ပြုလုပ်နိုင်ပါသည်/i, "ပြုလုပ်ပါသည်"],
+  // Amharic
+  [/ሊሠራ ይችላል/i, "ይሠራል"],
+  [/ሊያካትቱ ይችላሉ/i, "ያካትታሉ"],
+  // Georgian
+  [/შეიძლება შეცდეს/i, "ცდება"],
+  [/შესაძლოა, შეცდომებს შეიცავდეს/i, "შეცდომებს შეიცავს"],
+  // Armenian
+  [/կարող է սխալներ թույլ տալ/i, "սխալներ է թույլ տալիս"],
+  [/կարող են սխալներ պարունակել/i, "սխալներ են պարունակում"],
+]
 
 // The rewrite is confined to the host's own disclaimer element. Matching anywhere in the
 // page also caught the composer and the messages themselves, so quoting the sentence in
@@ -9,6 +230,9 @@ const FOOTERS = [
   '[data-testid="thread-disclaimer"]', // ChatGPT
   "[data-disclaimer]", // Claude
   "hallucination-disclaimer", // Gemini
+  // Google AI Mode. Its class names are generated and rotate between releases; the
+  // support link under the answer is the one stable thing about that footer.
+  'div:has(> a[href*="websearch?p=aimode"])',
 ].join(", ")
 
 const CLOWN = "\u{1F921}"
@@ -21,6 +245,7 @@ const COMPOSER = [
   '[contenteditable="true"][data-testid="chat-input"]', // Claude
   '[data-testid="chat-input"] [contenteditable="true"]', // Grok, where the testid is on the wrapper
   '.ql-editor[contenteditable="true"]', // Gemini
+  '[data-xid="aim-mars-input-plate"] textarea', // Google AI Mode, a plain textarea
 ].join(", ")
 
 // Each host gets its own anchor inside its own layout — chasing the composer with
@@ -58,6 +283,13 @@ const MOUNTS = [
     beside: ".query-bar",
     needs: '[data-testid="assistant-message"]',
   }, // Grok
+  {
+    selector: '[data-xid="aim-mars-input-plate"]',
+    variant: "mm-button--flow",
+    beside: '[data-xid="aim-mars-input-plate"]',
+    // That link only exists in the footer under a finished answer.
+    needs: 'a[href*="websearch?p=aimode"]',
+  }, // Google AI Mode
 ]
 
 // Grok ships no disclaimer at all, so it does not get to look innocent — we write one.
@@ -85,19 +317,40 @@ function theme() {
     scheme === "dark" ||
     html.dataset.mode === "dark" ||
     html.classList.contains("dark") ||
-    document.body.classList.contains("dark-theme")
+    document.body.classList.contains("dark-theme") ||
+    unlit()
 
   html.dataset.mmTheme = dark ? "dark" : "light"
 }
 
+// Last resort for a host that advertises its theme nowhere: read what the page is
+// actually painted, since that is the thing the disclaimer has to stay legible against.
+function unlit() {
+  for (const node of [document.body, document.documentElement]) {
+    const [r, g, b, a = 1] =
+      getComputedStyle(node)
+        .backgroundColor.match(/[\d.]+/g)
+        ?.map(Number) ?? []
+    if (r === undefined || a === 0) continue
+    return r * 0.299 + g * 0.587 + b * 0.114 < 128
+  }
+  return false
+}
+
 function gild(textNode) {
   const text = textNode.nodeValue
-  if (!text || !DISCLAIMER.test(text)) return
+  if (!text) return
+
+  const hedge = HEDGES.find(([pattern]) => pattern.test(text))
+  if (!hedge) return
 
   const parent = textNode.parentElement
   if (!parent) return
 
-  textNode.nodeValue = text.replace(DISCLAIMER, "$1 makes mistakes").trimEnd()
+  // Google's footer continues into a "Learn more" link, so a trailing space is load
+  // bearing — it moves to the far side of the clown rather than being trimmed away.
+  const spaced = /\s$/.test(text)
+  textNode.nodeValue = text.replace(hedge[0], hedge[1]).replace(/\s+$/, "")
   parent.classList.add(GILDED)
 
   // The clown lives in its own span: `background-clip: text` would otherwise mask it
@@ -105,7 +358,7 @@ function gild(textNode) {
   if (parent.querySelector(`.${CLOWN_CLASS}`)) return
   const clown = document.createElement("span")
   clown.className = CLOWN_CLASS
-  clown.textContent = ` ${CLOWN}`
+  clown.textContent = spaced ? ` ${CLOWN} ` : ` ${CLOWN}`
   textNode.after(clown)
 }
 
@@ -163,6 +416,15 @@ function insertNudge() {
   if (!composer) return
 
   composer.focus()
+
+  // Google AI Mode composes in a plain textarea, where a Range does not apply; the
+  // caret is moved with the field's own selection API instead.
+  if (composer instanceof HTMLTextAreaElement) {
+    const end = composer.value.length
+    composer.setSelectionRange(end, end)
+    document.execCommand("insertText", false, composer.value.trim() ? ` ${NUDGE}` : NUDGE)
+    return
+  }
 
   // execCommand fires beforeinput/input, which is how ProseMirror learns about the text
   const selection = window.getSelection()

@@ -8,6 +8,26 @@ The version in `manifest.json` is the source of truth — a release tag must mat
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-25
+
+### Added
+
+- Google AI Mode. The line under an answer there loses its hedge as well, and the
+  Improve answer button sits beside its composer.
+- The disclaimer is rewritten in whatever language the chat is set to, not only in
+  English. Every language hedges its own way, so the rewrite is as often a conjugation
+  as it is a deletion — German moves the verb, Hungarian hides the hedge in a suffix.
+
+### Changed
+
+- Colours fall back to reading the page's own background when a host advertises its
+  theme nowhere, so the rewritten line stays legible on every chat.
+
+### Fixed
+
+- The Improve answer button types into a plain textarea, which is what Google composes
+  in; it previously only handled the rich editors the other hosts use.
+
 ## [1.2.0] - 2026-07-20
 
 ### Fixed
@@ -56,7 +76,8 @@ The version in `manifest.json` is the source of truth — a release tag must mat
 - Popup setting to turn off the button's arrival flash.
 - Extension icons at 16/32/48/128.
 
-[unreleased]: https://github.com/xkelxmc/makes-mistakes/compare/v1.2.0...HEAD
+[unreleased]: https://github.com/xkelxmc/makes-mistakes/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/xkelxmc/makes-mistakes/releases/tag/v1.3.0
 [1.2.0]: https://github.com/xkelxmc/makes-mistakes/releases/tag/v1.2.0
 [1.1.0]: https://github.com/xkelxmc/makes-mistakes/releases/tag/v1.1.0
 [1.0.0]: https://github.com/xkelxmc/makes-mistakes/releases/tag/v1.0.0
