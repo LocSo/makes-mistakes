@@ -3,9 +3,6 @@ import { umamiWebsiteId } from "@/lib/analytics"
 import { site } from "@/lib/links"
 import appCss from "../styles.css?url"
 
-const description =
-  "A Chrome extension that rewrites the ChatGPT, Claude, Gemini, Grok and Google AI disclaimers, in your own language — no hedging, one clown, and a gold shimmer."
-
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -13,16 +10,6 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#0b0a08" },
       { title: `${site.name} — ${site.tagline}` },
-      { name: "description", content: description },
-      { property: "og:title", content: `${site.name} — ${site.tagline}` },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: site.url },
-      { property: "og:image", content: `${site.url}/og.png?v=3` },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: `${site.url}/og.png?v=3` },
     ],
     // Served from our own domain (see routes/stats.$.ts) so ad blockers have nothing to
     // match on; data-host-url sends the collected events back through the same proxy.
@@ -38,7 +25,6 @@ export const Route = createRootRoute({
       : [],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "canonical", href: site.url },
       {
         rel: "icon",
         href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤡</text></svg>",
