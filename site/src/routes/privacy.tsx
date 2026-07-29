@@ -1,7 +1,20 @@
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
+import { seoHead } from "@/lib/seo"
 
-export const Route = createFileRoute("/privacy")({ component: Privacy })
+const description =
+  "Privacy policy for the Makes Mistakes Chrome extension and ai-mistakes.org website, including permissions, local storage, analytics, and email collection."
+
+export const Route = createFileRoute("/privacy")({
+  head: () =>
+    seoHead({
+      title: "Privacy policy",
+      description,
+      path: "/privacy",
+    }),
+  component: Privacy,
+})
 
 const sections = [
   {
@@ -22,7 +35,7 @@ const sections = [
   },
   {
     title: "ai-mistakes.org",
-    body: "The website, which is separate from the extension. Visits are counted with Umami, proxied through this domain. Each request sends the page address and title, the site that linked you here, and your browser language and screen size; from your IP address and user agent Umami derives a country, a browser, an operating system and a device type, along with the hash that stands in for a session. It sets no cookies, identifies nobody, and follows nobody across sites. Clicks on the download and install buttons are recorded the same way. If you join the wishlist, your email address goes to Kit, who send the confirmation and keep it until you unsubscribe.",
+    body: "The website, which is separate from the extension. Visits are counted with Umami, proxied through this domain. Each request sends the page address and title, the site that linked you here, and your browser language and screen size; from your IP address and user agent Umami derives a country, a browser, an operating system and a device type, along with the hash that stands in for a session. It sets no cookies, identifies nobody, and follows nobody across sites. Clicks on the download and install buttons are recorded the same way. If you join the wishlist, your email address goes to Kit, which sends the confirmation and keeps it until you unsubscribe.",
   },
   {
     title: "Changes",
@@ -33,7 +46,9 @@ const sections = [
 function Privacy() {
   return (
     <>
-      <main className="mx-auto w-full max-w-2xl px-6 pt-20 pb-16">
+      <SiteHeader />
+
+      <main className="mx-auto w-full max-w-2xl px-6 pt-16 pb-16">
         <Link
           to="/"
           className="text-muted-foreground hover:text-gold text-xs tracking-[0.2em] uppercase transition-colors"
@@ -43,7 +58,7 @@ function Privacy() {
 
         <h1 className="font-heading mt-8 text-5xl leading-tight">Privacy</h1>
         <p className="text-muted-foreground mt-3 text-sm">
-          Short version: the extension collects nothing, because it has nowhere to send it.
+          The extension collects nothing, because it has nowhere to send it.
         </p>
 
         <div className="hairline my-10" />
