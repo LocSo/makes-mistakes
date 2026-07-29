@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { track } from "@/lib/analytics"
 import { links } from "@/lib/links"
 
 export function SiteHeader() {
@@ -31,14 +32,27 @@ export function SiteHeader() {
           >
             Fact-check workflow
           </Link>
-          <a
-            href={links.install}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-gold text-primary-foreground hover:bg-gold-lit rounded-full px-4 py-2 font-semibold transition-colors"
-          >
-            Add to Chrome
-          </a>
+          {/* Mirrors the hero CTA: promising "Add to Chrome" while the listing is unpublished
+              would hand the visitor a GitHub release page instead. */}
+          {links.chromeWebStore ? (
+            <a
+              href={links.chromeWebStore}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track("store", { from: "header" })}
+              className="bg-gold text-primary-foreground hover:bg-gold-lit hidden rounded-full px-4 py-2 font-semibold transition-colors sm:inline"
+            >
+              Add to Chrome
+            </a>
+          ) : (
+            <a
+              href={links.zip}
+              onClick={() => track("download", { from: "header" })}
+              className="bg-gold text-primary-foreground hover:bg-gold-lit hidden rounded-full px-4 py-2 font-semibold transition-colors sm:inline"
+            >
+              Download .zip
+            </a>
+          )}
         </nav>
       </div>
     </header>

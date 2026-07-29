@@ -95,7 +95,9 @@ function Home() {
       <SiteHeader />
 
       <main className="mx-auto w-full max-w-4xl px-6">
-        <section className="pt-20 pb-20 sm:pt-28">
+        {/* The header already supplies the top air; the hero only adds what it needs to
+            keep the demo card in the first screen on a 900px-tall viewport. */}
+        <section className="pt-12 pb-12 sm:pt-14">
           <p className="rise text-muted-foreground text-[11px] tracking-[0.28em] uppercase">
             Chrome extension
           </p>
@@ -118,7 +120,7 @@ function Home() {
             what&apos;s left, and hands you a button for when the answer is confidently wrong.
           </p>
 
-          <div className="rise mt-10 flex flex-wrap items-center gap-4 [animation-delay:240ms]">
+          <div className="rise mt-9 flex flex-wrap items-center gap-4 [animation-delay:240ms]">
             {/* A white pill with the real Chrome mark — our own button, so it is round and
                 sized to the page. Google's grey badge may not be restyled and is not used. */}
             {links.chromeWebStore ? (
@@ -198,6 +200,10 @@ function Home() {
 
         <div className="hairline" />
 
+        <ComingSoon />
+
+        <div className="hairline" />
+
         <section className="py-20">
           <div className="max-w-2xl">
             <p className="text-gold text-[10px] font-semibold tracking-[0.22em] uppercase">
@@ -243,10 +249,6 @@ function Home() {
             Browse the complete guide library
           </Link>
         </section>
-
-        <div className="hairline" />
-
-        <ComingSoon />
 
         <div className="hairline" />
 
