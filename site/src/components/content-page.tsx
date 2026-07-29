@@ -370,6 +370,7 @@ export function ContentPage({ page }: { page: ContentPageData }) {
 
 function RelatedPageLink({ slug }: { slug: string }) {
   const relatedPage = getContentPage(slug)
+  if (!relatedPage) return null
 
   return (
     <Link
@@ -377,7 +378,7 @@ function RelatedPageLink({ slug }: { slug: string }) {
       params={{ slug }}
       className="border-gold/15 hover:border-gold/35 group flex items-center justify-between gap-4 rounded-xl border p-4 transition-colors"
     >
-      <span className="text-sm font-medium">{relatedPage?.title ?? slug.replaceAll("-", " ")}</span>
+      <span className="text-sm font-medium">{relatedPage.title}</span>
       <ArrowRight
         className="text-gold size-4 flex-none transition-transform group-hover:translate-x-0.5"
         aria-hidden

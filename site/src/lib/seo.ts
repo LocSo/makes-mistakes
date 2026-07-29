@@ -1,3 +1,4 @@
+import { isUnderGuidesHub } from "@/lib/content-pages"
 import { links as appLinks, site } from "@/lib/links"
 
 export type SeoFaq = {
@@ -28,6 +29,18 @@ type ContentStructuredDataOptions = {
 function absoluteUrl(path: string) {
   if (path === "/") return site.url
   return `${site.url}${path.startsWith("/") ? path : `/${path}`}`
+}
+
+function breadcrumbTrail({ url, path, title }: { url: string; path: string; title: string }) {
+  const trail = [{ name: site.name, item: site.url }]
+
+  if (isUnderGuidesHub(path.replace(/^\//, ""))) {
+    trail.push({ name: "Guides", item: `${site.url}/guides` })
+  }
+
+  trail.push({ name: title, item: url })
+
+  return trail.map((crumb, index) => ({ "@type": "ListItem", position: index + 1, ...crumb }))
 }
 
 export function seoHead({
@@ -116,26 +129,7 @@ export function contentStructuredData({
     {
       "@type": "BreadcrumbList",
       "@id": `${url}#breadcrumbs`,
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: site.name,
-          item: site.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Guides",
-          item: `${site.url}/guides`,
-        },
-        {
-          "@type": "ListItem",
-          position: 3,
-          name: title,
-          item: url,
-        },
-      ],
+      itemListElement: breadcrumbTrail({ url, path, title }),
     },
   ]
 

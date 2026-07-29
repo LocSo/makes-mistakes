@@ -239,3 +239,16 @@ const contentBySlug = new Map(contentPages.map((page) => [page.slug, page]))
 export function getContentPage(slug: string) {
   return contentBySlug.get(slug)
 }
+
+// The hub is a genuine ancestor only for the pages it links to — the feature pages sit
+// directly under the site root, so their breadcrumbs must not claim otherwise.
+const guidesHubSlugs = new Set(
+  contentBySlug
+    .get("guides")
+    ?.sections.flatMap((section) => section.cards ?? [])
+    .flatMap((card) => card.slug ?? [])
+)
+
+export function isUnderGuidesHub(slug: string) {
+  return guidesHubSlugs.has(slug)
+}
