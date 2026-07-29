@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 import { Download, Palette, Type, Zap } from "lucide-react"
 import { ChatMock } from "@/components/chat-mock"
 import { ChromeLogo } from "@/components/chrome-logo"
@@ -6,11 +6,25 @@ import { ComingSoon } from "@/components/coming-soon"
 import { FlipWord } from "@/components/flip-word"
 import { GithubMark } from "@/components/github-mark"
 import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
 import { track } from "@/lib/analytics"
 import { links } from "@/lib/links"
 import { models } from "@/lib/models"
+import { homeStructuredData, seoHead } from "@/lib/seo"
 
-export const Route = createFileRoute("/")({ component: Home })
+const description =
+  "A privacy-first Chrome extension that rewrites AI disclaimers and adds a one-click double-check prompt for ChatGPT, Claude, Gemini, Grok and Google AI Mode."
+
+export const Route = createFileRoute("/")({
+  head: () =>
+    seoHead({
+      title: "Makes Mistakes — ChatGPT makes mistakes. The footer finally admits it.",
+      description,
+      path: "/",
+      structuredData: homeStructuredData(),
+    }),
+  component: Home,
+})
 
 const features = [
   {
@@ -27,6 +41,33 @@ const features = [
     icon: Zap,
     title: "One-click disappointment",
     body: "An Improve answer button above the composer appends a firm reminder to double-check before answering.",
+  },
+]
+
+const resources = [
+  {
+    label: "Pillar guide",
+    title: "How accurate is ChatGPT?",
+    body: "A risk-based guide to wrong answers, fabricated citations, current facts, and claim-level verification.",
+    slug: "chatgpt-accuracy-guide",
+  },
+  {
+    label: "Pillar guide",
+    title: "AI hallucinations explained",
+    body: "What hallucinations are, why plausible falsehoods happen, and the warning signs worth checking first.",
+    slug: "ai-hallucinations-guide",
+  },
+  {
+    label: "Playbook",
+    title: "How to fact-check ChatGPT",
+    body: "A seven-step workflow that turns a fluent answer into claims, evidence, and recorded uncertainty.",
+    slug: "how-to-fact-check-chatgpt",
+  },
+  {
+    label: "2026 comparison",
+    title: "Best answer-checking extensions",
+    body: "Choose among reminders, web search, prompt builders, automated checks, and multi-model review.",
+    slug: "best-chatgpt-chrome-extensions",
   },
 ]
 
@@ -51,8 +92,10 @@ const steps = [
 function Home() {
   return (
     <>
+      <SiteHeader />
+
       <main className="mx-auto w-full max-w-4xl px-6">
-        <section className="pt-24 pb-20 sm:pt-32">
+        <section className="pt-20 pb-20 sm:pt-28">
           <p className="rise text-muted-foreground text-[11px] tracking-[0.28em] uppercase">
             Chrome extension
           </p>
@@ -71,7 +114,7 @@ function Home() {
 
           <p className="rise text-muted-foreground mt-8 max-w-xl text-base leading-relaxed [animation-delay:160ms] sm:text-lg">
             A very small extension that drops the hedge from the footer disclaimer on ChatGPT,
-            Claude, Gemini, Grok and Google's AI Mode — in your own language — gilds what's left,
+            Claude, Gemini, Grok and Google&apos;s AI Mode — in your own language — gilds what&apos;s left,
             and hands you a button for when the answer is confidently wrong.
           </p>
 
@@ -155,6 +198,49 @@ function Home() {
 
         <div className="hairline" />
 
+        <section className="py-20">
+          <div className="max-w-2xl">
+            <p className="text-gold text-[10px] font-semibold tracking-[0.22em] uppercase">
+              Accuracy guides
+            </p>
+            <h2 className="font-heading mt-4 text-4xl leading-tight sm:text-5xl">
+              Use AI without mistaking fluency for proof.
+            </h2>
+            <p className="text-muted-foreground mt-4 text-sm leading-relaxed sm:text-base">
+              The extension supplies the reminder. These guides supply the repeatable workflow: match
+              verification to risk, inspect primary sources, and keep uncertainty next to the claim.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {resources.map((resource) => (
+              <Link
+                key={resource.slug}
+                to="/$slug"
+                params={{ slug: resource.slug }}
+                className="border-gold/15 bg-card/45 hover:border-gold/35 group rounded-2xl border p-5 transition-colors"
+              >
+                <p className="text-gold text-[10px] font-semibold tracking-[0.2em] uppercase">
+                  {resource.label}
+                </p>
+                <h3 className="font-heading mt-3 text-2xl leading-tight">{resource.title}</h3>
+                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{resource.body}</p>
+                <span className="text-gold mt-5 inline-block text-xs font-semibold">Read guide →</span>
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            to="/$slug"
+            params={{ slug: "guides" }}
+            className="text-gold hover:text-gold-lit mt-7 inline-flex text-sm font-semibold underline underline-offset-4"
+          >
+            Browse the complete guide library
+          </Link>
+        </section>
+
+        <div className="hairline" />
+
         <ComingSoon />
 
         <div className="hairline" />
@@ -165,7 +251,7 @@ function Home() {
               Install it <span className="italic">by hand</span>
             </h2>
             <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
-              Until the store listing goes live, loading it unpacked takes about a minute.
+              Loading the release archive unpacked takes about a minute.
             </p>
           </div>
 

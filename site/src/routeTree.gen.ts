@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as StatsSplatRouteImport } from './routes/stats.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -31,30 +37,34 @@ const StatsSplatRoute = StatsSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/privacy': typeof PrivacyRoute
   '/stats/$': typeof StatsSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/privacy': typeof PrivacyRoute
   '/stats/$': typeof StatsSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/privacy': typeof PrivacyRoute
   '/stats/$': typeof StatsSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/privacy' | '/stats/$'
+  fullPaths: '/' | '/$slug' | '/privacy' | '/stats/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/privacy' | '/stats/$'
-  id: '__root__' | '/' | '/privacy' | '/stats/$'
+  to: '/' | '/$slug' | '/privacy' | '/stats/$'
+  id: '__root__' | '/' | '/$slug' | '/privacy' | '/stats/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SlugRoute: typeof SlugRoute
   PrivacyRoute: typeof PrivacyRoute
   StatsSplatRoute: typeof StatsSplatRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SlugRoute: SlugRoute,
   PrivacyRoute: PrivacyRoute,
   StatsSplatRoute: StatsSplatRoute,
 }
