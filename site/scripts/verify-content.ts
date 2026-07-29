@@ -17,7 +17,10 @@ function words(value: unknown): string[] {
   if (!value || typeof value !== "object") return []
 
   return Object.entries(value)
-    .filter(([key]) => !["slug", "url", "href", "published", "modified", "schemaType", "intent"].includes(key))
+    .filter(
+      ([key]) =>
+        !["slug", "url", "href", "published", "modified", "schemaType", "intent"].includes(key)
+    )
     .flatMap(([, child]) => words(child))
 }
 
@@ -34,15 +37,27 @@ for (const page of contentPages) {
   descriptions.add(page.description)
 
   check(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(page.slug), `Invalid slug: ${page.slug}`)
-  check(page.description.length >= 110 && page.description.length <= 180, `Description must be 110-180 characters: ${page.slug}`)
+  check(
+    page.description.length >= 110 && page.description.length <= 180,
+    `Description must be 110-180 characters: ${page.slug}`
+  )
   check(page.quickAnswer.length >= 120, `Quick answer is too thin: ${page.slug}`)
   check(page.sections.length >= 3, `Page needs at least three substantive sections: ${page.slug}`)
-  check(new Set(page.sections.map((section) => section.title)).size === page.sections.length, `Duplicate section title on ${page.slug}`)
+  check(
+    new Set(page.sections.map((section) => section.title)).size === page.sections.length,
+    `Duplicate section title on ${page.slug}`
+  )
   check(page.faqs.length >= 3, `Page needs at least three FAQs: ${page.slug}`)
-  check(new Set(page.faqs.map((faq) => faq.question)).size === page.faqs.length, `Duplicate FAQ on ${page.slug}`)
+  check(
+    new Set(page.faqs.map((faq) => faq.question)).size === page.faqs.length,
+    `Duplicate FAQ on ${page.slug}`
+  )
   check(page.related.length >= 3, `Page needs at least three related links: ${page.slug}`)
   check(!page.related.includes(page.slug), `Self-referential related link on ${page.slug}`)
-  check(new Set(page.related).size === page.related.length, `Duplicate related link on ${page.slug}`)
+  check(
+    new Set(page.related).size === page.related.length,
+    `Duplicate related link on ${page.slug}`
+  )
   check(words(page).length >= 350, `Page is too thin (<350 modeled words): ${page.slug}`)
 
   for (const source of page.sources ?? []) {

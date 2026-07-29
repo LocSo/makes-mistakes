@@ -1,10 +1,14 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, Check, ExternalLink } from "lucide-react"
-import { getContentPage, type ContentCard, type ContentPage as ContentPageData } from "@/lib/content-pages"
-import { track } from "@/lib/analytics"
-import { links } from "@/lib/links"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
+import { track } from "@/lib/analytics"
+import {
+  getContentPage,
+  type ContentCard,
+  type ContentPage as ContentPageData,
+} from "@/lib/content-pages"
+import { links } from "@/lib/links"
 
 function anchorFor(title: string) {
   return title
@@ -51,7 +55,10 @@ function ContentCardLink({ card }: { card: ContentCard }) {
           {card.href ? (
             <ExternalLink className="size-3.5" aria-hidden />
           ) : (
-            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            <ArrowRight
+              className="size-3.5 transition-transform group-hover:translate-x-0.5"
+              aria-hidden
+            />
           )}
         </span>
       ) : null}
@@ -84,7 +91,10 @@ export function ContentPage({ page }: { page: ContentPageData }) {
 
       <main className="mx-auto w-full max-w-4xl px-6 pt-14 pb-16 sm:pt-20">
         <article>
-          <nav aria-label="Breadcrumb" className="text-muted-foreground flex flex-wrap gap-2 text-xs">
+          <nav
+            aria-label="Breadcrumb"
+            className="text-muted-foreground flex flex-wrap gap-2 text-xs"
+          >
             <Link to="/" className="hover:text-gold transition-colors">
               Makes Mistakes
             </Link>
@@ -119,7 +129,10 @@ export function ContentPage({ page }: { page: ContentPageData }) {
             </div>
           </header>
 
-          <aside className="border-gold/25 bg-gold/6 mt-10 rounded-2xl border p-5 sm:p-6" aria-label="Quick answer">
+          <aside
+            className="border-gold/25 bg-gold/6 mt-10 rounded-2xl border p-5 sm:p-6"
+            aria-label="Quick answer"
+          >
             <p className="text-gold text-[10px] font-semibold tracking-[0.22em] uppercase">
               Quick answer
             </p>
@@ -197,7 +210,10 @@ export function ContentPage({ page }: { page: ContentPageData }) {
                 {section.cards?.length ? (
                   <div className="mt-7 grid gap-4 sm:grid-cols-2">
                     {section.cards.map((card) => (
-                      <ContentCardLink key={`${card.title}-${card.slug ?? card.href ?? "card"}`} card={card} />
+                      <ContentCardLink
+                        key={`${card.title}-${card.slug ?? card.href ?? "card"}`}
+                        card={card}
+                      />
                     ))}
                   </div>
                 ) : null}
@@ -220,7 +236,10 @@ export function ContentPage({ page }: { page: ContentPageData }) {
                       </thead>
                       <tbody className="text-muted-foreground">
                         {section.table.rows.map((row, rowIndex) => (
-                          <tr key={`${row.join("-")}-${rowIndex}`} className="border-gold/10 border-b last:border-b-0">
+                          <tr
+                            key={`${row.join("-")}-${rowIndex}`}
+                            className="border-gold/10 border-b last:border-b-0"
+                          >
                             {row.map((cell, cellIndex) => (
                               <td
                                 key={`${cell}-${cellIndex}`}
@@ -254,8 +273,9 @@ export function ContentPage({ page }: { page: ContentPageData }) {
             <section className="mt-16" id="sources">
               <h2 className="font-heading text-3xl">Sources and further reading</h2>
               <p className="text-muted-foreground mt-3 max-w-2xl text-sm leading-relaxed">
-                Product details and guidance were checked against these first-party pages on {formatDate(page.modified)}.
-                Re-check current listings before making an install or high-stakes decision.
+                Product details and guidance were checked against these first-party pages on{" "}
+                {formatDate(page.modified)}. Re-check current listings before making an install or
+                high-stakes decision.
               </p>
               <ul className="mt-5 space-y-3">
                 {page.sources.map((source) => (
@@ -270,7 +290,9 @@ export function ContentPage({ page }: { page: ContentPageData }) {
                       <ExternalLink className="size-3.5" aria-hidden />
                     </a>
                     <p className="text-muted-foreground mt-1 text-xs">{source.publisher}</p>
-                    <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{source.note}</p>
+                    <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                      {source.note}
+                    </p>
                   </li>
                 ))}
               </ul>
@@ -356,7 +378,10 @@ function RelatedPageLink({ slug }: { slug: string }) {
       className="border-gold/15 hover:border-gold/35 group flex items-center justify-between gap-4 rounded-xl border p-4 transition-colors"
     >
       <span className="text-sm font-medium">{relatedPage?.title ?? slug.replaceAll("-", " ")}</span>
-      <ArrowRight className="text-gold size-4 flex-none transition-transform group-hover:translate-x-0.5" aria-hidden />
+      <ArrowRight
+        className="text-gold size-4 flex-none transition-transform group-hover:translate-x-0.5"
+        aria-hidden
+      />
     </Link>
   )
 }

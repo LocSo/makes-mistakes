@@ -22,10 +22,22 @@ export const pages09: ContentPage[] = [
         table: {
           headers: ["Interface behavior", "Makes Mistakes behavior"],
           rows: [
-            ["A disclaimer says the AI can or may make mistakes", "Rewrites the hedge into a direct statement"],
-            ["The line is visually easy to ignore", "Adds bold treatment, a slow gold sweep, and a clown"],
-            ["Grok has no matching disclaimer in the supported web layout", "Adds ‘Grok makes mistakes. Check important info.’"],
-            ["The page uses another supported language", "Applies a language-specific grammatical replacement"],
+            [
+              "A disclaimer says the AI can or may make mistakes",
+              "Rewrites the hedge into a direct statement",
+            ],
+            [
+              "The line is visually easy to ignore",
+              "Adds bold treatment, a slow gold sweep, and a clown",
+            ],
+            [
+              "Grok has no matching disclaimer in the supported web layout",
+              "Adds ‘Grok makes mistakes. Check important info.’",
+            ],
+            [
+              "The page uses another supported language",
+              "Applies a language-specific grammatical replacement",
+            ],
           ],
         },
       },
@@ -112,11 +124,23 @@ export const pages09: ContentPage[] = [
         table: {
           headers: ["Language pattern", "Why it needs its own rule"],
           rows: [
-            ["English: can make mistakes", "The modal and verb phrase become a third-person singular statement"],
-            ["German: kann Fehler machen", "The finite verb and infinitive structure must be rearranged"],
+            [
+              "English: can make mistakes",
+              "The modal and verb phrase become a third-person singular statement",
+            ],
+            [
+              "German: kann Fehler machen",
+              "The finite verb and infinitive structure must be rearranged",
+            ],
             ["Hungarian: hibázhat", "The possibility is encoded in the verb suffix"],
-            ["Japanese and Korean disclaimer clauses", "The hedge can span a longer formal phrase rather than one word"],
-            ["Right-to-left scripts", "Phrase matching and inserted punctuation or emoji must preserve readable order"],
+            [
+              "Japanese and Korean disclaimer clauses",
+              "The hedge can span a longer formal phrase rather than one word",
+            ],
+            [
+              "Right-to-left scripts",
+              "Phrase matching and inserted punctuation or emoji must preserve readable order",
+            ],
           ],
         },
       },
@@ -186,7 +210,10 @@ export const pages09: ContentPage[] = [
         table: {
           headers: ["Data or capability", "Behavior"],
           rows: [
-            ["Conversation text", "Read only in the page as needed to locate supported UI state; not copied to a developer server"],
+            [
+              "Conversation text",
+              "Read only in the page as needed to locate supported UI state; not copied to a developer server",
+            ],
             ["Disclaimer text", "Matched and rewritten in the current page"],
             ["Flash preference", "One boolean stored through Chrome synced storage"],
             ["Analytics or telemetry", "None in the extension"],

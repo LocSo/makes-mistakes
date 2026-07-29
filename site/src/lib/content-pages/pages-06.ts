@@ -219,10 +219,22 @@ export const pages06: ContentPage[] = [
         table: {
           headers: ["Question", "What to evaluate"],
           rows: [
-            ["Did it rewrite my paragraph well?", "Fit to your intent, preserved meaning, tone, and omissions"],
-            ["Is this current policy correct?", "Official source, effective date, jurisdiction, and exceptions"],
-            ["Is this analysis persuasive?", "Evidence quality, counterarguments, assumptions, and causal logic"],
-            ["Is this calculation right?", "Inputs, formula, units, intermediate steps, and independent reproduction"],
+            [
+              "Did it rewrite my paragraph well?",
+              "Fit to your intent, preserved meaning, tone, and omissions",
+            ],
+            [
+              "Is this current policy correct?",
+              "Official source, effective date, jurisdiction, and exceptions",
+            ],
+            [
+              "Is this analysis persuasive?",
+              "Evidence quality, counterarguments, assumptions, and causal logic",
+            ],
+            [
+              "Is this calculation right?",
+              "Inputs, formula, units, intermediate steps, and independent reproduction",
+            ],
           ],
         },
       },

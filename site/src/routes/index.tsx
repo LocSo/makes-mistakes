@@ -114,8 +114,8 @@ function Home() {
 
           <p className="rise text-muted-foreground mt-8 max-w-xl text-base leading-relaxed [animation-delay:160ms] sm:text-lg">
             A very small extension that drops the hedge from the footer disclaimer on ChatGPT,
-            Claude, Gemini, Grok and Google&apos;s AI Mode — in your own language — gilds what&apos;s left,
-            and hands you a button for when the answer is confidently wrong.
+            Claude, Gemini, Grok and Google&apos;s AI Mode — in your own language — gilds
+            what&apos;s left, and hands you a button for when the answer is confidently wrong.
           </p>
 
           <div className="rise mt-10 flex flex-wrap items-center gap-4 [animation-delay:240ms]">
@@ -207,8 +207,9 @@ function Home() {
               Use AI without mistaking fluency for proof.
             </h2>
             <p className="text-muted-foreground mt-4 text-sm leading-relaxed sm:text-base">
-              The extension supplies the reminder. These guides supply the repeatable workflow: match
-              verification to risk, inspect primary sources, and keep uncertainty next to the claim.
+              The extension supplies the reminder. These guides supply the repeatable workflow:
+              match verification to risk, inspect primary sources, and keep uncertainty next to the
+              claim.
             </p>
           </div>
 
@@ -224,8 +225,12 @@ function Home() {
                   {resource.label}
                 </p>
                 <h3 className="font-heading mt-3 text-2xl leading-tight">{resource.title}</h3>
-                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{resource.body}</p>
-                <span className="text-gold mt-5 inline-block text-xs font-semibold">Read guide →</span>
+                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                  {resource.body}
+                </p>
+                <span className="text-gold mt-5 inline-block text-xs font-semibold">
+                  Read guide →
+                </span>
               </Link>
             ))}
           </div>

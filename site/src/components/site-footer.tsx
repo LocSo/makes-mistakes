@@ -12,7 +12,10 @@ export function SiteFooter() {
             A reminder and re-check prompt—not an automated fact checker.
           </p>
         </div>
-        <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-end">
+        <nav
+          aria-label="Footer"
+          className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-end"
+        >
           <Link
             to="/$slug"
             params={{ slug: "guides" }}

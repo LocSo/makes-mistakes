@@ -21,12 +21,32 @@ export const pages10: ContentPage[] = [
         table: {
           headers: ["Question", "Makes Mistakes", "WebChatGPT"],
           rows: [
-            ["Primary job", "Interrupt over-trust and start a second pass", "Bring web search and source retrieval into AI chats"],
-            ["Changes answers directly", "No; inserts a prompt only when clicked", "Can run search and crawling prompts that affect the answer context"],
+            [
+              "Primary job",
+              "Interrupt over-trust and start a second pass",
+              "Bring web search and source retrieval into AI chats",
+            ],
+            [
+              "Changes answers directly",
+              "No; inserts a prompt only when clicked",
+              "Can run search and crawling prompts that affect the answer context",
+            ],
             ["Shows original sources", "No", "Its product page emphasizes original-source links"],
-            ["Supported workflow", "ChatGPT, Claude, Gemini, Grok, Google AI Mode", "Product page emphasizes ChatGPT, Claude, Gemini, and search platforms"],
-            ["Permission surface", "Storage plus listed chat hosts", "Official FAQ explains broad site access for local search and text extraction"],
-            ["Best fit", "You already have tools but forget to challenge the answer", "You need current web evidence inside the workflow"],
+            [
+              "Supported workflow",
+              "ChatGPT, Claude, Gemini, Grok, Google AI Mode",
+              "Product page emphasizes ChatGPT, Claude, Gemini, and search platforms",
+            ],
+            [
+              "Permission surface",
+              "Storage plus listed chat hosts",
+              "Official FAQ explains broad site access for local search and text extraction",
+            ],
+            [
+              "Best fit",
+              "You already have tools but forget to challenge the answer",
+              "You need current web evidence inside the workflow",
+            ],
           ],
         },
       },
@@ -108,10 +128,26 @@ export const pages10: ContentPage[] = [
           headers: ["Layer", "What it does", "What it cannot establish alone"],
           rows: [
             ["Reminder", "Prompts the user to challenge an answer", "Whether any claim is true"],
-            ["Search grounding", "Retrieves current pages and source links", "Whether the synthesis represents those pages correctly"],
-            ["Automated checker", "Classifies or scores claims and risks", "A final judgment free from model or source error"],
-            ["Prompt builder", "Turns content into a repeatable audit request", "The quality of the AI that executes the prompt"],
-            ["Model comparison", "Surfaces agreement, disagreement, and missing perspectives", "Independent proof—models can share the same error"],
+            [
+              "Search grounding",
+              "Retrieves current pages and source links",
+              "Whether the synthesis represents those pages correctly",
+            ],
+            [
+              "Automated checker",
+              "Classifies or scores claims and risks",
+              "A final judgment free from model or source error",
+            ],
+            [
+              "Prompt builder",
+              "Turns content into a repeatable audit request",
+              "The quality of the AI that executes the prompt",
+            ],
+            [
+              "Model comparison",
+              "Surfaces agreement, disagreement, and missing perspectives",
+              "Independent proof—models can share the same error",
+            ],
           ],
         },
       },
@@ -243,7 +279,10 @@ export const pages10: ContentPage[] = [
             ["I need to triage many claims", "Automated checker with inspectable evidence"],
             ["I repeatedly check pages, selections, or videos", "Prompt builder"],
             ["I need competing perspectives", "Multi-model comparison"],
-            ["The content is highly sensitive or consequential", "Manual primary-source workflow plus professional review where appropriate"],
+            [
+              "The content is highly sensitive or consequential",
+              "Manual primary-source workflow plus professional review where appropriate",
+            ],
           ],
         },
       },
