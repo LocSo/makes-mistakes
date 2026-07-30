@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "check:content": "bun run scripts/verify-content.ts",
     "check": "bun run lint && bun run format && bun run typecheck && bun run check:content",
-    "check:fix": "bun run lint:fix && bun run format:fix && bun run typecheck && bun run check:content"
+    "check:fix": "bun run lint:fix && bun run format:fix && bun run typecheck && bun run check:content",
+    "unit-test:run": "vitest run"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -27,12 +28,14 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "latest",
+    "@upstash/redis": "1.38.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.25.0",
     "nitro": "^3.0.260610-beta",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "resend": "6.18.1",
     "shadcn": "^4.13.1",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4",

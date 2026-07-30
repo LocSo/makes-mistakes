@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as StatsSplatRouteImport } from './routes/stats.$'
+import { Route as WishlistConfirmRouteImport } from './routes/wishlist.confirm'
+import { Route as ApiWishlistConfirmRouteImport } from './routes/api.wishlist.confirm'
+import { Route as ApiWishlistSubscribeRouteImport } from './routes/api.wishlist.subscribe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +37,39 @@ const StatsSplatRoute = StatsSplatRouteImport.update({
   path: '/stats/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WishlistConfirmRoute = WishlistConfirmRouteImport.update({
+  id: '/wishlist/confirm',
+  path: '/wishlist/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWishlistConfirmRoute = ApiWishlistConfirmRouteImport.update({
+  id: '/api/wishlist/confirm',
+  path: '/api/wishlist/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWishlistSubscribeRoute = ApiWishlistSubscribeRouteImport.update({
+  id: '/api/wishlist/subscribe',
+  path: '/api/wishlist/subscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/privacy': typeof PrivacyRoute
   '/stats/$': typeof StatsSplatRoute
+  '/wishlist/confirm': typeof WishlistConfirmRoute
+  '/api/wishlist/confirm': typeof ApiWishlistConfirmRoute
+  '/api/wishlist/subscribe': typeof ApiWishlistSubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/privacy': typeof PrivacyRoute
   '/stats/$': typeof StatsSplatRoute
+  '/wishlist/confirm': typeof WishlistConfirmRoute
+  '/api/wishlist/confirm': typeof ApiWishlistConfirmRoute
+  '/api/wishlist/subscribe': typeof ApiWishlistSubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +77,38 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/privacy': typeof PrivacyRoute
   '/stats/$': typeof StatsSplatRoute
+  '/wishlist/confirm': typeof WishlistConfirmRoute
+  '/api/wishlist/confirm': typeof ApiWishlistConfirmRoute
+  '/api/wishlist/subscribe': typeof ApiWishlistSubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$slug' | '/privacy' | '/stats/$'
+  fullPaths:
+    | '/'
+    | '/$slug'
+    | '/privacy'
+    | '/stats/$'
+    | '/wishlist/confirm'
+    | '/api/wishlist/confirm'
+    | '/api/wishlist/subscribe'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$slug' | '/privacy' | '/stats/$'
-  id: '__root__' | '/' | '/$slug' | '/privacy' | '/stats/$'
+  to:
+    | '/'
+    | '/$slug'
+    | '/privacy'
+    | '/stats/$'
+    | '/wishlist/confirm'
+    | '/api/wishlist/confirm'
+    | '/api/wishlist/subscribe'
+  id:
+    | '__root__'
+    | '/'
+    | '/$slug'
+    | '/privacy'
+    | '/stats/$'
+    | '/wishlist/confirm'
+    | '/api/wishlist/confirm'
+    | '/api/wishlist/subscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +116,9 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   PrivacyRoute: typeof PrivacyRoute
   StatsSplatRoute: typeof StatsSplatRoute
+  WishlistConfirmRoute: typeof WishlistConfirmRoute
+  ApiWishlistConfirmRoute: typeof ApiWishlistConfirmRoute
+  ApiWishlistSubscribeRoute: typeof ApiWishlistSubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +151,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StatsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wishlist/confirm': {
+      id: '/wishlist/confirm'
+      path: '/wishlist/confirm'
+      fullPath: '/wishlist/confirm'
+      preLoaderRoute: typeof WishlistConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/wishlist/confirm': {
+      id: '/api/wishlist/confirm'
+      path: '/api/wishlist/confirm'
+      fullPath: '/api/wishlist/confirm'
+      preLoaderRoute: typeof ApiWishlistConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/wishlist/subscribe': {
+      id: '/api/wishlist/subscribe'
+      path: '/api/wishlist/subscribe'
+      fullPath: '/api/wishlist/subscribe'
+      preLoaderRoute: typeof ApiWishlistSubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +180,9 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   PrivacyRoute: PrivacyRoute,
   StatsSplatRoute: StatsSplatRoute,
+  WishlistConfirmRoute: WishlistConfirmRoute,
+  ApiWishlistConfirmRoute: ApiWishlistConfirmRoute,
+  ApiWishlistSubscribeRoute: ApiWishlistSubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

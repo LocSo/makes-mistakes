@@ -11,18 +11,19 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#0b0a08" },
       { title: `${site.name} — ${site.tagline}` },
     ],
-    // Served from our own domain (see routes/stats.$.ts) so ad blockers have nothing to
-    // match on; data-host-url sends the collected events back through the same proxy.
-    scripts: umamiWebsiteId
-      ? [
-          {
-            src: "/stats/script.js",
-            defer: true,
-            "data-website-id": umamiWebsiteId,
-            "data-host-url": "/stats",
-          },
-        ]
-      : [],
+    scripts: [
+      ...(umamiWebsiteId
+        ? [
+            {
+              src: "/stats/script.js",
+              defer: true,
+              "data-website-id": umamiWebsiteId,
+              "data-host-url": "/stats",
+              "data-exclude-hash": "true",
+            },
+          ]
+        : []),
+    ],
     links: [
       { rel: "stylesheet", href: appCss },
       {

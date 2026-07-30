@@ -18,7 +18,7 @@ const planned = [
 
 export function ComingSoon() {
   return (
-    <section className="py-20">
+    <section id="wishlist" className="py-20">
       <div className="grain relative overflow-hidden rounded-2xl border border-dashed border-[color-mix(in_srgb,var(--gold)_28%,transparent)] bg-[#100e09]/70 px-6 py-10 sm:px-10 sm:py-12">
         <div className="relative">
           <p className="text-gold/70 text-[11px] tracking-[0.28em] uppercase">Coming soon</p>
@@ -56,7 +56,8 @@ export function ComingSoon() {
           <div className="mt-10 flex flex-col gap-3">
             <WishlistForm />
             <p className="text-muted-foreground/70 max-w-md text-xs leading-relaxed">
-              One email when the paid version is ready. Nothing else, and you can leave at any time.
+              Submit to request a confirmation email. Once confirmed, you&apos;ll get one email when
+              the paid version is ready. No newsletter.
             </p>
           </div>
         </div>

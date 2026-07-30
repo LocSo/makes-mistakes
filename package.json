@@ -12,7 +12,8 @@
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
     "check": "bun run lint && bun run format",
-    "check:fix": "bun run lint:fix && bun run format:fix",
+    "check:fix": "bun run lint:fix && bun run format:fix && bun run --cwd site check:fix",
+    "unit-test:run": "bun run --cwd site unit-test:run",
     "dev": "cd site && bun run dev",
     "dev:portless": "cd site && bun run dev:portless",
     "site:build": "cd site && bun run build"

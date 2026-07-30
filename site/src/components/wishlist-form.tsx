@@ -1,71 +1,176 @@
-import { useState } from "react"
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { ArrowRight, LoaderCircle, MailCheck } from "lucide-react"
-import { track } from "@/lib/analytics"
-import { links } from "@/lib/links"
+import { turnstileSiteKey } from "@/features/wishlist/client-config"
+import { isSubscribeResponse } from "@/features/wishlist/contract"
 
-type State = "idle" | "sending" | "done" | "error"
+type SubmissionState = "idle" | "sending" | "done"
+type Feedback =
+  | "verification"
+  | "verification-unavailable"
+  | "rate-limited"
+  | "unavailable"
+  | "error"
+type TurnstileComponent = (typeof import("@/features/wishlist/turnstile-widget"))["TurnstileWidget"]
+type FeedbackState = {
+  message: Feedback | null
+  visible: boolean
+}
 
-// Kit can be slow; without a cap the button would spin forever on a dead network.
-const TIMEOUT = 12_000
+const REQUEST_TIMEOUT = 60_000
+const FEEDBACK_MESSAGES: Record<Feedback, string> = {
+  verification: "Complete the verification to continue.",
+  "verification-unavailable": "Verification couldn't load.",
+  "rate-limited": "Too many attempts. Please try again in 10 minutes.",
+  unavailable: "Email signup is temporarily unavailable. Please try again later.",
+  error: "That didn't go through. Please check the address and try again.",
+}
 
 export function WishlistForm() {
-  const [state, setState] = useState<State>("idle")
+  const [submissionState, setSubmissionState] = useState<SubmissionState>("idle")
+  const [feedback, setFeedback] = useState<FeedbackState>({ message: null, visible: false })
   const [email, setEmail] = useState("")
+  const [turnstileActive, setTurnstileActive] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0)
+  const [TurnstileWidget, setTurnstileWidget] = useState<TurnstileComponent | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const pendingSubmitRef = useRef(false)
+  const successRef = useRef<HTMLDivElement>(null)
 
-  // Without a form id there is nowhere to send anything, so fall back to the repo.
-  if (!links.kitFormAction) {
-    return (
-      <a
-        href={links.wishlist}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-gold text-primary-foreground hover:bg-gold-lit inline-flex h-11 items-center gap-2 rounded-full px-6 text-sm font-semibold transition-colors"
-      >
-        Join the wishlist
-      </a>
+  useEffect(() => {
+    if (submissionState === "done") successRef.current?.focus()
+  }, [submissionState])
+
+  useEffect(() => {
+    if (!turnstileToken || !pendingSubmitRef.current) return
+    pendingSubmitRef.current = false
+    formRef.current?.requestSubmit()
+  }, [turnstileToken])
+
+  const showFeedback = useCallback((message: Feedback) => {
+    setFeedback({ message, visible: true })
+  }, [])
+
+  const receiveTurnstileToken = useCallback((token: string | null) => {
+    setTurnstileToken(token)
+    if (token) {
+      setFeedback((current) =>
+        current.message === "verification" || current.message === "verification-unavailable"
+          ? { ...current, visible: false }
+          : current
+      )
+    }
+  }, [])
+
+  const handleTurnstileUnavailable = useCallback(
+    (unavailable: boolean) => {
+      if (unavailable) showFeedback("verification-unavailable")
+    },
+    [showFeedback]
+  )
+
+  useEffect(() => {
+    if (!turnstileSiteKey || !turnstileActive || TurnstileWidget) return
+
+    let cancelled = false
+    void import("@/features/wishlist/turnstile-widget").then(
+      (module) => {
+        if (!cancelled) setTurnstileWidget(() => module.TurnstileWidget)
+      },
+      () => {
+        if (!cancelled) handleTurnstileUnavailable(true)
+      }
     )
-  }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    return () => {
+      cancelled = true
+    }
+  }, [handleTurnstileUnavailable, turnstileActive, turnstileResetKey, TurnstileWidget])
+
+  const retryTurnstile = useCallback(() => {
+    setTurnstileWidget(null)
+    setTurnstileResetKey((current) => current + 1)
+    showFeedback("verification")
+  }, [showFeedback])
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const form = event.currentTarget
-    const data = new FormData(form)
+    if (submissionState === "sending") return
 
-    // Honeypot: real people never fill a hidden field, bots fill everything.
-    if (data.get("website")) {
-      setState("done")
+    if (turnstileSiteKey && !turnstileToken) {
+      pendingSubmitRef.current = true
+      setTurnstileActive(true)
+      if (feedback.message === "verification-unavailable") {
+        retryTurnstile()
+      } else {
+        showFeedback("verification")
+      }
       return
     }
 
-    setState("sending")
-    try {
-      const response = await fetch(links.kitFormAction!, {
-        method: "POST",
-        headers: { Accept: "application/json" },
-        body: data,
-        signal: AbortSignal.timeout(TIMEOUT),
-      })
-      if (!response.ok) throw new Error(String(response.status))
+    const data = new FormData(event.currentTarget)
+    const website = String(data.get("website") ?? "")
+    let succeeded = false
 
-      setState("done")
+    setSubmissionState("sending")
+    try {
+      const response = await fetch("/api/wishlist/subscribe", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, website, turnstileToken: turnstileToken ?? "" }),
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT),
+      })
+
+      if (response.status === 403) {
+        showFeedback(turnstileSiteKey ? "verification" : "error")
+        return
+      }
+      if (response.status === 429) {
+        showFeedback("rate-limited")
+        return
+      }
+      if (response.status === 503) {
+        showFeedback("unavailable")
+        return
+      }
+      if (!response.ok) {
+        showFeedback("error")
+        return
+      }
+
+      const result: unknown = await response.json()
+      if (!isSubscribeResponse(result)) {
+        showFeedback("error")
+        return
+      }
+
+      succeeded = true
+      setSubmissionState("done")
       setEmail("")
-      track("wishlist")
     } catch {
-      setState("error")
+      showFeedback("error")
+    } finally {
+      if (!succeeded) {
+        setSubmissionState("idle")
+        setTurnstileToken(null)
+        setTurnstileResetKey((current) => current + 1)
+      }
     }
   }
 
-  // Kit runs double opt-in, so the address is not on the list until it is confirmed —
-  // saying "you're in" here would be a lie and people would never open the email.
-  if (state === "done") {
+  if (submissionState === "done") {
     return (
-      <div className="border-gold/40 bg-gold/8 flex items-start gap-3 rounded-2xl border px-5 py-4">
+      <div
+        ref={successRef}
+        role="status"
+        tabIndex={-1}
+        className="border-gold/40 bg-gold/8 flex items-start gap-3 rounded-2xl border px-5 py-4"
+      >
         <MailCheck className="text-gold mt-0.5 size-5 flex-none" aria-hidden />
         <div>
-          <p className="text-gold-lit text-sm font-semibold">Almost there.</p>
+          <p className="text-gold-lit text-sm font-semibold">Request received.</p>
           <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
-            We sent you a confirmation link. Click it and you're on the list — otherwise this never
-            happened.
+            If a confirmation email arrives, follow its link to join the launch list.
           </p>
         </div>
       </div>
@@ -73,17 +178,24 @@ export function WishlistForm() {
   }
 
   return (
-    <form onSubmit={submit} className="relative flex w-full max-w-lg flex-col gap-2">
+    <form ref={formRef} onSubmit={submit} className="relative flex w-full max-w-lg flex-col gap-2">
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
         <input
           type="email"
           name="email_address"
           required
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          onFocus={() => setTurnstileActive(true)}
+          onChange={(event) => {
+            pendingSubmitRef.current = false
+            setEmail(event.target.value)
+            setTurnstileActive(true)
+            setFeedback((current) => (current.visible ? { ...current, visible: false } : current))
+          }}
+          disabled={submissionState === "sending"}
           placeholder="you@example.com"
           aria-label="Email address"
-          className="border-gold/30 focus:border-gold/70 placeholder:text-muted-foreground/60 h-11 min-w-0 flex-1 rounded-full border bg-black/40 px-5 text-sm transition-colors outline-none"
+          className="border-gold/30 focus:border-gold/70 placeholder:text-muted-foreground/60 h-11 min-w-0 flex-1 rounded-full border bg-black/40 px-5 text-sm transition-colors outline-none disabled:cursor-not-allowed disabled:opacity-70"
         />
 
         <input
@@ -95,14 +207,12 @@ export function WishlistForm() {
           className="pointer-events-none absolute h-0 w-0 opacity-0"
         />
 
-        {/* Stays lit while the field is empty — dimming the main call to action is the
-            fastest way to make nobody notice it. Empty input is caught by `required`. */}
         <button
           type="submit"
-          disabled={state === "sending"}
+          disabled={submissionState === "sending"}
           className="bg-gold text-primary-foreground hover:bg-gold-lit inline-flex h-11 flex-none items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-colors disabled:cursor-default disabled:opacity-70"
         >
-          {state === "sending" ? (
+          {submissionState === "sending" ? (
             <>
               <LoaderCircle className="size-4 animate-spin" aria-hidden />
               Sending
@@ -116,24 +226,39 @@ export function WishlistForm() {
         </button>
       </div>
 
-      {state === "error" && (
-        <p className="ps-5 text-xs text-red-400/85">
-          That didn't go through.{" "}
-          <button type="submit" className="underline underline-offset-2">
-            Try again
-          </button>{" "}
-          or{" "}
-          <a
-            href={links.issues}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2"
+      <div className="w-full">
+        {TurnstileWidget && turnstileActive && (
+          <TurnstileWidget
+            resetKey={turnstileResetKey}
+            onToken={receiveTurnstileToken}
+            onUnavailable={handleTurnstileUnavailable}
+          />
+        )}
+
+        <div className="h-8 overflow-hidden ps-5 text-xs leading-4" aria-live="polite" aria-atomic>
+          <p
+            aria-hidden={!feedback.visible}
+            className={`text-red-400/85 transition-[opacity,transform] duration-200 ${
+              feedback.visible ? "translate-y-0 opacity-100" : "-translate-y-0.5 opacity-0"
+            }`}
           >
-            open an issue
-          </a>
-          .
-        </p>
-      )}
+            {feedback.message ? FEEDBACK_MESSAGES[feedback.message] : ""}
+            {feedback.message === "verification-unavailable" && (
+              <>
+                {" "}
+                <button
+                  type="button"
+                  className="underline underline-offset-2"
+                  onClick={retryTurnstile}
+                >
+                  Retry
+                </button>
+                .
+              </>
+            )}
+          </p>
+        </div>
+      </div>
     </form>
   )
 }

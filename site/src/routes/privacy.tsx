@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header"
 import { seoHead } from "@/lib/seo"
 
 const description =
-  "Privacy policy for the Makes Mistakes Chrome extension and ai-mistakes.org website, including permissions, local storage, analytics, and email collection."
+  "Privacy policy for the Makes Mistakes Chrome extension and the separate ai-mistakes.org website, including extension permissions, local storage, website analytics, and the website's launch-notification form."
 
 export const Route = createFileRoute("/privacy")({
   head: () =>
@@ -35,7 +35,11 @@ const sections = [
   },
   {
     title: "ai-mistakes.org",
-    body: "The website, which is separate from the extension. Visits are counted with Umami, proxied through this domain. Each request sends the page address and title, the site that linked you here, and your browser language and screen size; from your IP address and user agent Umami derives a country, a browser, an operating system and a device type, along with the hash that stands in for a session. It sets no cookies, identifies nobody, and follows nobody across sites. Clicks on the download and install buttons are recorded the same way. If you join the wishlist, your email address goes to Kit, which sends the confirmation and keeps it until you unsubscribe.",
+    body: "The website is separate from the extension. Visits are counted with Umami, proxied through this domain. Each request sends the page address and title, the site that linked you here, and your browser language and screen size; from your IP address and user agent Umami derives a country, a browser, an operating system and a device type, along with the hash that stands in for a session. It sets no cookies, identifies nobody, and follows nobody across sites. Clicks on the download and install buttons are recorded the same way.",
+  },
+  {
+    title: "Launch notification on ai-mistakes.org",
+    body: "The launch-notification wishlist is a feature of ai-mistakes.org and is completely separate from the Chrome extension. The extension never collects, receives, reads, or transmits your email address. The website uses double opt-in. Cloudflare Turnstile checks the signup for abuse, and Resend processes the address to deliver the confirmation email. Open and click tracking are disabled for these emails. The address becomes a Resend contact only after you explicitly confirm it. We send no newsletter: only one launch notification when the paid version is ready. Upstash Redis holds separate keyed hashes of the address and client IP for a seven-day resend cooldown and a short abuse-prevention rate limit; it never receives the address, IP, or confirmation token. You can request deletion at hello@ai-mistakes.org. Confirmed contacts will be deleted within 30 days after the launch mailing is complete.",
   },
   {
     title: "Changes",
