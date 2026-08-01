@@ -3,16 +3,6 @@ import { umamiWebsiteId } from "@/lib/analytics"
 import { site } from "@/lib/links"
 import appCss from "../styles.css?url"
 
-const microsoftClarityScript = `(function (c, l, a, r, i, t, y) {
-  if (c[a]) return;
-  c[a] = function () { (c[a].q = c[a].q || []).push(arguments); };
-  t = l.createElement(r);
-  t.async = 1;
-  t.src = "https://www.clarity.ms/tag/" + i;
-  y = l.getElementsByTagName(r)[0];
-  y.parentNode.insertBefore(t, y);
-})(window, document, "clarity", "script", "qz3eu0y36m");`
-
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -73,7 +63,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
         {import.meta.env.PROD ? (
-          <script dangerouslySetInnerHTML={{ __html: microsoftClarityScript }} />
+          <script
+            defer
+            src="/_analytics/clarity/loader.js"
+            data-project-id="qz3eu0y36m"
+          />
         ) : null}
       </head>
       <body>
