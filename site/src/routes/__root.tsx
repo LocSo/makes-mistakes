@@ -62,6 +62,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {import.meta.env.PROD ? (
+          <script
+            defer
+            src="/_analytics/clarity/loader.js"
+            data-project-id="qz3eu0y36m"
+          />
+        ) : null}
       </head>
       <body>
         {children}
