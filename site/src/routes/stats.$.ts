@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { shouldDropEvent } from "@/lib/event-throttle.server"
 
 // Umami's own domains sit on every blocklist, and our audience installs browser
 // extensions for fun — without this proxy we would lose most of the events.
@@ -43,7 +44,12 @@ async function handle({ request }: { request: Request }) {
   const { pathname } = new URL(request.url)
 
   if (pathname.endsWith("/script.js")) return serveScript()
-  if (pathname.endsWith("/api/send")) return collect(request)
+  if (pathname.endsWith("/api/send")) {
+    // Empty body, not `{}`: the tracker assigns `cache` from a parsed response, so an
+    // empty one leaves an already-earned cache token intact. Nothing on the page waits.
+    if (await shouldDropEvent(request)) return new Response("", { status: 200 })
+    return collect(request)
+  }
 
   return new Response("Not found", { status: 404 })
 }

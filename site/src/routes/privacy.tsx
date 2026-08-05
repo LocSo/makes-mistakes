@@ -35,7 +35,7 @@ const sections = [
   },
   {
     title: "ai-mistakes.org",
-    body: "The website is separate from the extension. Visits are counted with Umami, proxied through this domain. Each request sends the page address and title, the site that linked you here, and your browser language and screen size; from your IP address and user agent Umami derives a country, a browser, an operating system and a device type, along with the hash that stands in for a session. It sets no cookies, identifies nobody, and follows nobody across sites. Clicks on the download and install buttons are recorded the same way.",
+    body: "The website is separate from the extension. Visits are counted with Umami, proxied through this domain. Each request sends the page address and title, the site that linked you here, and your browser language and screen size; from your IP address and user agent Umami derives a country, a browser, an operating system and a device type, along with the hash that stands in for a session. It sets no cookies, names nobody, and follows nobody across sites. Clicks on the download and install buttons are recorded the same way. To stop an automated flood running up the analytics bill, the endpoint that receives these events counts them per visitor, keyed by a one-way hash of your IP address and browser; Upstash Redis holds that counter for about two hours and it is never joined to the analytics data.",
   },
   {
     title: "Launch notification on ai-mistakes.org",
